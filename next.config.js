@@ -7,6 +7,10 @@ module.exports = {
         source: '/SearchPage/:query',
         destination: '/SearchPage?query=:query',
       },
+      {
+        source: '/pagination/:page',
+        destination: '/PaginationPage',
+      },
     ];
   },
 };

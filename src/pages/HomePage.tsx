@@ -1,7 +1,6 @@
 import { Pagination } from "../components/paginations";
 import { Users } from "../components/user"
 import { useState, useEffect } from "react";
-
 import { SearchBar } from "../components/search";
 
 const Home = () => {
