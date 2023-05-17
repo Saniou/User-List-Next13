@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {AiOutlineArrowLeft, AiOutlineArrowRight} from "react-icons/ai"
 
 export const Pagination = ({
@@ -14,8 +13,6 @@ export const Pagination = ({
     if (pageCount === 1) {
         return null;
     }
-
-    const pages = _.range(1, pageCount + 1);
 
     let displayedPages = [];
 
