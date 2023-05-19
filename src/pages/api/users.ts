@@ -2,7 +2,7 @@ export default async function handler(req, res) {
   try {
     const { q } = req.query;
 
-    const response = await fetch(`https://dummyjson.com/users/search?q=${q}`);
+    const response = await fetch(`https://dummyjson.com/users/search?q=${q}&limit=100`);;
     const data = await response.json();
 
     if (data && data.users) {

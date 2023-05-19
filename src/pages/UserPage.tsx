@@ -11,7 +11,7 @@ const UserPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://dummyjson.com/users`);
+        const response = await fetch(`https://dummyjson.com/users?limit=100`);
         const data = await response.json();
 
         const selectedUser = data.users.find((user) => user.id === parseInt(id));
