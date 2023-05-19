@@ -1,33 +1,33 @@
 import { useEffect, useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
 import { useRouter } from 'next/router';
-import Select from 'react-select';
+import dynamic from 'next/dynamic';
+
+const Select = dynamic(() => import('react-select'), { ssr: false });
 
 export const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [users, setUsers] = useState([]);
   const router = useRouter();
 
+  const fetchUsers = async (query) => {
+    try {
+      const response = await fetch(`/api/users?q=${query}`);
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      const data = await fetch(`https://dummyjson.com/users/?limit=100`);
-      const res = await data.json();
-      setUsers(res.users);
-    };
-    fetchUsers();
-  }, []);
+    fetchUsers(searchQuery);
+  }, [searchQuery]);
 
   const handleUserClick = (id) => {
     router.push(`/UserPage?id=${id}`);
   };
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.lastName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const options = filteredUsers.map((user) => ({
+  const options = users.map((user) => ({
     value: user.id,
     label: `${user.firstName} ${user.lastName}`,
   }));
@@ -36,7 +36,7 @@ export const SearchBar = () => {
     handleUserClick(selectedOption.value);
   };
   
-  const selectStyles = {
+  const customStyles = {
     control: (provided) => ({
       ...provided,
       border: 'none',
@@ -52,7 +52,7 @@ export const SearchBar = () => {
       background: 'rgb(14 116 144)',
       cursor: 'pointer',
     }),
-    placeholder: (provided, state) => ({
+    placeholder: (provided) => ({
       ...provided,
       color: 'white'
     }),
@@ -60,19 +60,16 @@ export const SearchBar = () => {
 
   return (
     <div className="w-[50%] relative text-gray-600 mx-auto mb-8 my-2">
-      <Select
-        className="w-full"
-        options={options}
-        value={null}
-        onChange={handleSelectChange}
-        isSearchable
-        filterOption={({ label }, input) =>
-          label.toLowerCase().includes(input.toLowerCase())
-        }
-        styles={selectStyles}
-      />
-      <button type="submit" className="cursor-pointer absolute top-0 right-0 mt-3 mr-2">
-      </button>
+      {typeof window !== 'undefined' && (
+        <Select
+          className="w-full"
+          options={options}
+          value={options.find((option) => option.value === searchQuery)}
+          onChange={handleSelectChange}
+          isSearchable
+          styles={customStyles}
+        />
+      )}
     </div>
   );
 };
