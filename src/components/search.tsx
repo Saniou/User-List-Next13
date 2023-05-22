@@ -11,14 +11,10 @@ export const SearchBar = () => {
 
   const fetchUsers = async (query) => {
     try {
-      let response;
-      if (/^\d+$/.test(query)) {
-        response = await fetch(`/api/users/${query}`);
-      } else {
-        response = await fetch(`/api/users?q=${query}`);
-      }
+      const response = await fetch(`https://dummyjson.com/users/search?q=${query}&limit=10`);
       const data = await response.json();
-      setUsers(data);
+      setUsers(data.users);
+      console.error(data);
     } catch (error) {
       console.error(error);
     }
@@ -35,19 +31,19 @@ export const SearchBar = () => {
     router.push(`/UserPage?id=${id}&UserName=${encodeURIComponent(firstName)}&${encodeURIComponent(lastName)}`);
   };
 
-  const options = users.map((user) => ({
-    value: user.id,
-    label: `${user.firstName} ${user.lastName}`,
+  const options = users.map((person) => ({
+    value: person.id,
+    label: `${person.firstName} ${person.lastName}`,
   }));
 
   const handleSelectChange = (selectedOption) => {
     if (selectedOption) {
       handleUserClick(selectedOption.value);
-      } else {
-        const encodedQuery = encodeURIComponent(searchQuery);
-        router.push(`/404?q=${encodedQuery}`);
-      }
+    } else {
+      const encodedQuery = encodeURIComponent(searchQuery);
+      router.push(`/404?q=${encodedQuery}`);
     }
+  };
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
@@ -91,7 +87,6 @@ export const SearchBar = () => {
           styles={customStyles}
         />
       )}
-      
     </div>
   );
 };
