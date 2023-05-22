@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import {AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai'
+import { AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai';
 
 export const Pagination = ({
   items,
@@ -7,7 +7,7 @@ export const Pagination = ({
   currentPage,
   onPageChange,
   leftSiblingCount = 1,
-  rightSiblingCount = 1
+  rightSiblingCount = 1,
 }) => {
   const router = useRouter();
   const pageCount = Math.ceil(items / pageSize);
@@ -48,9 +48,12 @@ export const Pagination = ({
   }
 
   const handlePageChange = (page) => {
-    router.push(`/pagination/${page}`);
+    const skip = (page - 1) * pageSize;
+    const url = `/pagination/users?limit=${pageSize}&skip=${skip}`;
+    router.push(url);
     onPageChange(page);
   };
+
   return (
     <div className="flex items-center justify-center px-4 py-3 sm:px-6">
       <div>

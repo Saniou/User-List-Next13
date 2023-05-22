@@ -11,7 +11,12 @@ export const SearchBar = () => {
 
   const fetchUsers = async (query) => {
     try {
-      const response = await fetch(`/api/users?q=${query}`);
+      let response;
+      if (/^\d+$/.test(query)) {
+        response = await fetch(`/api/users/${query}`);
+      } else {
+        response = await fetch(`/api/users?q=${query}`);
+      }
       const data = await response.json();
       setUsers(data);
     } catch (error) {
@@ -24,7 +29,10 @@ export const SearchBar = () => {
   }, [searchQuery]);
 
   const handleUserClick = (id) => {
-    router.push(`/UserPage?id=${id}`);
+    const selectedUser = users.find((user) => user.id === id);
+    const firstName = selectedUser ? selectedUser.firstName : '';
+    const lastName = selectedUser ? selectedUser.lastName : '';
+    router.push(`/UserPage?id=${id}&UserName=${encodeURIComponent(firstName)}&${encodeURIComponent(lastName)}`);
   };
 
   const options = users.map((user) => ({
@@ -33,7 +41,19 @@ export const SearchBar = () => {
   }));
 
   const handleSelectChange = (selectedOption) => {
-    handleUserClick(selectedOption.value);
+    if (selectedOption) {
+      handleUserClick(selectedOption.value);
+      } else {
+        const encodedQuery = encodeURIComponent(searchQuery);
+        router.push(`/404?q=${encodedQuery}`);
+      }
+    }
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      const selectedOption = options.find((option) => option.value === searchQuery);
+      handleSelectChange(selectedOption);
+    }
   };
   
   const customStyles = {
@@ -66,10 +86,12 @@ export const SearchBar = () => {
           options={options}
           value={options.find((option) => option.value === searchQuery)}
           onChange={handleSelectChange}
-          isSearchable
+          onInputChange={(value) => setSearchQuery(value)}
+          onKeyDown={handleKeyDown}
           styles={customStyles}
         />
       )}
+      
     </div>
   );
 };

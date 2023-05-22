@@ -3,9 +3,10 @@ import HomePage from './HomePage'
 
 const PaginationPage = () => {
   const router = useRouter();
+  const { limit, skip } = router.query;
   return (
     <div>
-    <HomePage/>
+    <HomePage limit={limit} skip={skip} />
     </div>
   );
 };
